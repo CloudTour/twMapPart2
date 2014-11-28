@@ -165,6 +165,73 @@ public class DBManager {
 		}
 		return result;
 	}
+	
+		/*
+	 * insert text analyse into attitude table
+	 */
+	public void insertAttitude(long sId, String polarity, String score) {
+		java.util.Date dt = new java.util.Date();
+		java.text.SimpleDateFormat sdf = 
+		     new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String currentTime = sdf.format(dt);
+		try {
+			stmt = conn.createStatement();
+			PreparedStatement updateStatus = null;
+			sql = "insert into attitude values(?,?,?,?)";
+
+			try {
+				updateStatus = conn.prepareStatement(sql);
+				updateStatus.setLong(1, sId);
+				updateStatus.setString(2, polarity);
+				updateStatus.setString(3, score);
+				updateStatus.setString(4, currentTime);
+				
+				updateStatus.executeUpdate();
+			} catch (SQLException e) {
+				//System.out.println(sId + "||" +sText);
+			} finally {
+				updateStatus.close();
+			}
+		} catch (SQLException e) {
+			System.out.println("sql error");
+			e.printStackTrace();
+		}
+	}
+	/*
+	 * get all from attitude table and output json
+	 */
+	public String getJsonFromAttitude() {
+		String out = null;
+	    JSONObject obj = new JSONObject();
+	    JSONArray jarray = new JSONArray();
+	    try {
+			try {
+				stmt = conn.createStatement();
+				sql = "select * from attitude";
+				rs = stmt.executeQuery(sql);
+				while(rs.next()) {
+					String sid = rs.getString("sid");
+					String polarity = rs.getString("polarity");
+					String score = rs.getString("score");
+					//System.out.println(sid + polarity + score);
+					JSONObject ob = new JSONObject();
+					ob.put("sid", sid);
+					ob.put("polarity", polarity);
+					ob.put("score", score);
+					jarray.put(ob);
+				}
+				
+			} catch (SQLException e) {
+				System.out.println("sql error");
+				e.printStackTrace();
+			}
+			obj.put("outcome", jarray);
+	    } catch (Exception e) {
+	        e.printStackTrace(); 
+	    }
+
+		return obj.toString();
+	}
 	/*
 	 * public static void main(String args[]) { DBManager ma = new DBManager();
 	 * ma.getDirver(); ma.connectAWS(); ma.queryNum(); ma.shutdown(); }
