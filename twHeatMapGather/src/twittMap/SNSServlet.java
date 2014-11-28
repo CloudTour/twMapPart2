@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class SNSServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private	 DBManager db;
 
 
 	/**
@@ -37,6 +38,9 @@ public class SNSServlet extends HttpServlet {
 	public SNSServlet() {
 		super();
 		// TODO Auto-generated constructor stub
+		db = new DBManager();
+		db.getDirver();
+		db.connectAWS();
 	}
 
 	/**
@@ -88,15 +92,15 @@ public class SNSServlet extends HttpServlet {
 		
 		// Process the message based on type.
 		if (messagetype.equals("Notification")) {
-			//Just log the subject (if it exists) and the message.
-			String logMsgAndSubject = ">>Notification received from topic " + msg.getTopicArn();
-			if (msg.getSubject() != null)
-				logMsgAndSubject += " Subject: " + msg.getSubject();
-			logMsgAndSubject += " Message: " + msg.getMessage();
-			System.out.println(logMsgAndSubject);
-			
+			System.out.println(msg.getMessage());
 			//TODO: Parse this message and store into DB.
-		
+			String[] contents = msg.getMessage().split(" ");
+			Long sId = Long.parseLong(contents[0]);
+			String type = contents[1];
+			String score = contents[2];
+			
+			db.insertAttitude(sId, type, score);			
+			System.out.println("evaluation " + sId + " saved");
 			
 		} 
 		else if (messagetype.equals("SubscriptionConfirmation"))
