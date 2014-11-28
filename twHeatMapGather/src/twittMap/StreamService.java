@@ -1,7 +1,5 @@
 package twittMap;
 
-import java.util.ArrayList;
-
 import twitter4j.*;
 
 public class StreamService {

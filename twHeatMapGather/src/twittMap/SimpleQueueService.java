@@ -32,13 +32,12 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
  * WANRNING:</b> To avoid accidental leakage of your credentials, DO NOT keep
  * the credentials file in your source directory.
  */
-public class SimpleQueueService {
+public final class SimpleQueueService {
 	private static AWSCredentials credentials;
 	private static AmazonSQS sqs;
 	private static String myQueueUrl;
 	private static ThreadPoolExecutor threadPool;
 	private static int produceTaskMaxNumber = 10;
-
 	public static void IniateSimpleQueueService() {
 		try {
 			credentials = new ProfileCredentialsProvider("default")
@@ -50,8 +49,8 @@ public class SimpleQueueService {
 							+ "location (/Users/daniel/.aws/credentials), and is in valid format.",
 					e);
 		}
-		AmazonSQS sqs = new AmazonSQSClient(credentials);
-		sqs.setRegion(Region.getRegion(Regions.US_WEST_2));
+		sqs = new AmazonSQSClient(credentials);
+		sqs.setRegion(Region.getRegion(Regions.AP_NORTHEAST_1));
 		try {
 			// Create a queue
 			System.out.println("Creating a new SQS queue called MyQueue.\n");
@@ -94,9 +93,9 @@ public class SimpleQueueService {
 
 	public static void SendMsg(long Id,String msg) {
 		// Send a message
-		System.out.println("Sending a message to MyQueue.\n");
+		System.out.println("Sending a message to MyQueue:"+String.format("%1$020d", Id)+msg);
 		try {
-			sqs.sendMessage(new SendMessageRequest(myQueueUrl, msg));
+			sqs.sendMessage(new SendMessageRequest(myQueueUrl, String.format("%1$020d", Id)+msg));
 		} catch (AmazonServiceException ase) {
 			System.out
 					.println("Caught an AmazonServiceException, which means your request made it "
@@ -140,13 +139,14 @@ public class SimpleQueueService {
 					System.out.println("    Value: " + entry.getValue());
 				}
 			}
+			msg = messages.get(0).getBody().toString();
 			// Delete a message
 			System.out.println("Deleting a message.\n");
 			String messageRecieptHandle = messages.get(0).getReceiptHandle();
 			sqs.deleteMessage(new DeleteMessageRequest(myQueueUrl,
 					messageRecieptHandle));
-			System.out.println();
-			msg = messages.get(0).getBody().toString();
+			System.out.println(msg);
+			
 		} catch (AmazonServiceException ase) {
 			System.out
 					.println("Caught an AmazonServiceException, which means your request made it "
@@ -166,7 +166,7 @@ public class SimpleQueueService {
 		return msg;
 	}
 
-	public static void DeleteSimpleQueueService() throws Exception {
+	public final static void DeleteSimpleQueueService() throws Exception {
 		try {
 			// Delete a queue
 			System.out.println("Deleting the test queue.\n");
