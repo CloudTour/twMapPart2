@@ -232,3 +232,22 @@ function log(msg) {
 	$("#status").val(txt);
 	$("#status").scrollTop($("#status")[0].scrollHeight);
 }
+
+
+function getSentiment(){
+    $.getJSON("sentiment", function(data){
+        //data format:
+        //{outcome: [{sid:sid, polarity: "negative"|"positive", score: score}, ...]}
+       var evals = data.outcome;
+       $.each(evals, function(index, value){
+            $("#status").val(value.sid +": "+value.polarity +" "+value.score );
+            $("#status").scrollTop($("#status")[0].scrollHeight);
+       });
+    });
+
+}
+
+//run getSentiment periodically
+setInterval(function() {
+    getSentiment(); 
+}, interval);
