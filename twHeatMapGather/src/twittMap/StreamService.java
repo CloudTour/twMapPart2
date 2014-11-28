@@ -1,6 +1,7 @@
 package twittMap;
 
 import java.util.ArrayList;
+
 import twitter4j.*;
 
 public class StreamService {
@@ -40,7 +41,7 @@ public class StreamService {
 		return streamService;
 	}
 
-	// get the number of tweets with keyword
+/*	// get the number of tweets with keyword
 	public ArrayList<StreamStatus> getStream(String keyWord, int number)
 			throws InterruptedException {
 		TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
@@ -104,7 +105,7 @@ public class StreamService {
 		twitterStream.cleanUp();
 		twitterStream.shutdown();
 		return list;
-	}
+	}*/
 
 	// main gather
 	public void gatherNum(int num, int time) throws Exception {
@@ -131,7 +132,7 @@ public class StreamService {
 						stramStatus.sText = status.getText();
 						dbM.update(stramStatus);
 						// System.out.println("time:" + status.getCreatedAt());
-						SimpleQueueService.SendMsg(String.valueOf(stramStatus.sId)+stramStatus.sText);
+						SimpleQueueService.SendMsg(stramStatus.sId,stramStatus.sText);
 						if (total >= 0) {
 							count++;
 						}
@@ -207,6 +208,7 @@ public class StreamService {
 								.getLongitude();
 						stramStatus.sText = status.getText();
 						dbM.update(stramStatus);
+						SimpleQueueService.SendMsg(stramStatus.sId,stramStatus.sText);
 					}
 				}
 
@@ -265,6 +267,12 @@ public class StreamService {
 			dbM.shutdown();
 		}
 		// System.out.println("dbM: " + dbM.toString());
+		try {
+			SimpleQueueService.DeleteSimpleQueueService();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Stop!!!");
 	}
 	// public static void beginGather(int i) {

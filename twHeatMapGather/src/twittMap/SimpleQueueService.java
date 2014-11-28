@@ -92,7 +92,7 @@ public class SimpleQueueService {
 
 	}
 
-	public static void SendMsg(String msg) {
+	public static void SendMsg(long Id,String msg) {
 		// Send a message
 		System.out.println("Sending a message to MyQueue.\n");
 		try {
@@ -166,13 +166,33 @@ public class SimpleQueueService {
 		return msg;
 	}
 
-	public static void main(String[] args) throws Exception {
-		// Delete a queue
-		System.out.println("Deleting the test queue.\n");
-		sqs.deleteQueue(new DeleteQueueRequest(myQueueUrl));
-		/*
-		 * The ProfileCredentialsProvider will return your [default] credential
-		 * profile by reading from the credentials file located at ().
-		 */
+	public static void DeleteSimpleQueueService() throws Exception {
+		try {
+			// Delete a queue
+			System.out.println("Deleting the test queue.\n");
+			sqs.deleteQueue(new DeleteQueueRequest(myQueueUrl));
+			/*
+			 * The ProfileCredentialsProvider will return your [default]
+			 * credential profile by reading from the credentials file located
+			 * at ().
+			 */
+		} catch (AmazonServiceException ase) {
+			System.out
+					.println("Caught an AmazonServiceException, which means your request made it "
+							+ "to Amazon SQS, but was rejected with an error response for some reason.");
+			System.out.println("Error Message:    " + ase.getMessage());
+			System.out.println("HTTP Status Code: " + ase.getStatusCode());
+			System.out.println("AWS Error Code:   " + ase.getErrorCode());
+			System.out.println("Error Type:       " + ase.getErrorType());
+			System.out.println("Request ID:       " + ase.getRequestId());
+		} catch (AmazonClientException ace) {
+			System.out
+					.println("Caught an AmazonClientException, which means the client encountered "
+							+ "a serious internal problem while trying to communicate with SQS, such as not "
+							+ "being able to access the network.");
+			System.out.println("Error Message: " + ace.getMessage());
+		}
+		//πÿ±’œﬂ≥Ã≥ÿ
+		threadPool.shutdown();
 	}
 }
