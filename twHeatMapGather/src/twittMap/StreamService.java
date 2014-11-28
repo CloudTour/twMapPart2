@@ -29,6 +29,9 @@ public class StreamService {
 		twitterStream = new TwitterStreamFactory().getInstance();
 		dbM = new DBManager();
 		SimpleQueueService.IniateSimpleQueueService();
+		
+		SNS.init();
+		
 		System.out.println("twitterStream " + twitterStream.toString()
 				+ "dbM: " + dbM.toString());
 	}

@@ -28,7 +28,13 @@ public class ThreadPoolTask implements Runnable, Serializable {
 					.GetInstanceFromFile("api_key.txt");
 			Document doc = alchemyObj
 					.TextGetTextSentiment(SimpleQueueService.PickUpAmsg());
+			
+			//publish this evaluation result to SNS: sid + type + score.
+			//SNS.publishMsg(msg);
+			
 			System.out.println(getStringFromDocument(doc));
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
