@@ -177,14 +177,22 @@ function toDatetimeString(date) {
 }
 
 function toUTC(datetime) {
-	var reggie = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
-	var dateArray = reggie.exec(datetime);
-	var d = new Date((+dateArray[1]), (+dateArray[2]) - 1, // Careful, month
-															// starts at 0!
-	(+dateArray[3]), (+dateArray[4]), (+dateArray[5]), (+dateArray[6]));
+	var datetimeSet = datetime.split(" ");
+	var dateSet = datetimeSet[0].split("-");
+	var timeSet = datetimeSet[1].split(":");
+
+	var d = new Date(
+			Number(dateSet[0]), 	// year
+			Number(dateSet[1]) - 1, // month
+			Number(dateSet[2]),		// date
+			Number(timeSet[0]), 	// hour
+			Number(timeSet[1]),		// minute
+			Number(timeSet[2])		// second
+	);
+
 	var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
 	var date = new Date(utc - 60 * 5);
-	return toDatetimeString(new Date(utc));
+	return toDatetimeString(date);
 }
 
 function startTimer() {
