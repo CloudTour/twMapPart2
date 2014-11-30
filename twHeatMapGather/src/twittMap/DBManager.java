@@ -213,11 +213,13 @@ public class DBManager {
 					String sid = rs.getString("sid");
 					String polarity = rs.getString("polarity");
 					String score = rs.getString("score");
+					String insertDateTime = rs.getString("insertDateTime");
 					//System.out.println(sid + polarity + score);
 					JSONObject ob = new JSONObject();
 					ob.put("sid", sid);
 					ob.put("polarity", polarity);
 					ob.put("score", score);
+					ob.put("insertDateTime", insertDateTime);
 					jarray.put(ob);
 				}
 				
