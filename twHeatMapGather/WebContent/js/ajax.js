@@ -243,7 +243,7 @@ function log(msg) {
 
 
 function getSentiment(){
-    $.getJSON("sentiment", function(data){
+    $.getJSON("sentiment", {time:begin },function(data){
         //data format:
         //{outcome: [{sid:sid, polarity: "negative"|"positive", score: score}, ...]}
        var evals = data.outcome;
