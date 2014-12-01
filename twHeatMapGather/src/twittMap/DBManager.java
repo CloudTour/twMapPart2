@@ -198,39 +198,42 @@ public class DBManager {
 		}
 	}
 	/*
-	 * get all from attitude table and output json
+	 * get all from attitude table and output json  select * from attitude where insertDateTime like '%2014%'
 	 */
-	public String getJsonFromAttitude() {
-		String out = null;
-	    JSONObject obj = new JSONObject();
-	    JSONArray jarray = new JSONArray();
-	    try {
+	public String getJsonFromAttitudeByDateTime(String datetime) {
+		JSONObject obj = new JSONObject();
+		JSONArray jarray = new JSONArray();
+		try {
 			try {
 				stmt = conn.createStatement();
-				sql = "select * from attitude";
-				rs = stmt.executeQuery(sql);
-				while(rs.next()) {
+				sql = "select * from attitude where insertDateTime like ?";
+				PreparedStatement preparedStatement = conn
+						.prepareStatement(sql);
+				preparedStatement.setString(1, "%" + datetime + "%");
+				System.out.println(preparedStatement);
+				rs = preparedStatement.executeQuery();
+				while (rs.next()) {
 					String sid = rs.getString("sid");
 					String polarity = rs.getString("polarity");
 					String score = rs.getString("score");
-					String insertDateTime = rs.getString("insertDateTime");
-					//System.out.println(sid + polarity + score);
+					// String insertDateTime = rs.getString("insertDateTime");
+					// System.out.println(sid + polarity + score);
 					JSONObject ob = new JSONObject();
 					ob.put("sid", sid);
 					ob.put("polarity", polarity);
 					ob.put("score", score);
-					ob.put("insertDateTime", insertDateTime);
+					// ob.put("insertDateTime", insertDateTime);
 					jarray.put(ob);
 				}
-				
+
 			} catch (SQLException e) {
 				System.out.println("sql error");
 				e.printStackTrace();
 			}
 			obj.put("outcome", jarray);
-	    } catch (Exception e) {
-	        e.printStackTrace(); 
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return obj.toString();
 	}
