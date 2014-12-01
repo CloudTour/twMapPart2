@@ -7,9 +7,9 @@ twMapPart2
 **SentimentLoader.java**: Servlet. It returns sentiment data in JSON when getting GET requests.  
 
 ###TODO:
-* Get the ip of the server and subscribe automatically
-* Filter the sentiment data when retrieving from db
-* Better display sentiment data
+* Get the ip of the server and subscribe automatically  
+* ~~Filter the sentiment data when retrieving from db~~  
+* Better display sentiment data  
 
 
 Assignment Objectives:

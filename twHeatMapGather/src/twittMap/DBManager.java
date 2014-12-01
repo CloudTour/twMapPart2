@@ -9,6 +9,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.amazonaws.util.json.JSONArray;
+import com.amazonaws.util.json.JSONObject;
+
 public class DBManager {
 	Connection conn;
 	Statement stmt;
@@ -198,18 +201,27 @@ public class DBManager {
 		}
 	}
 	/*
-	 * get all from attitude table and output json  select * from attitude where insertDateTime like '%2014%'
+	 * get all between begin and end from attitude table and output json. Time format could be "2014-12-1 14:14:51".
 	 */
-	public String getJsonFromAttitudeByDateTime(String datetime) {
+	public String getJsonFromAttitude(String begin, String end) {
 		JSONObject obj = new JSONObject();
 		JSONArray jarray = new JSONArray();
 		try {
 			try {
 				stmt = conn.createStatement();
-				sql = "select * from attitude where insertDateTime like ?";
-				PreparedStatement preparedStatement = conn
-						.prepareStatement(sql);
-				preparedStatement.setString(1, "%" + datetime + "%");
+				PreparedStatement preparedStatement;
+				if( end == null	){
+					sql = "select * from attitude where insertDateTime > ?";
+					preparedStatement = conn.prepareStatement(sql);
+					preparedStatement.setString(1, begin);
+				}
+				else{
+					sql = "select * from attitude where insertDateTime between ? and ?";
+					preparedStatement = conn.prepareStatement(sql);
+					preparedStatement.setString(1, begin);
+					preparedStatement.setString(2, end);
+				}
+				
 				System.out.println(preparedStatement);
 				rs = preparedStatement.executeQuery();
 				while (rs.next()) {
@@ -217,7 +229,6 @@ public class DBManager {
 					String polarity = rs.getString("polarity");
 					String score = rs.getString("score");
 					// String insertDateTime = rs.getString("insertDateTime");
-					// System.out.println(sid + polarity + score);
 					JSONObject ob = new JSONObject();
 					ob.put("sid", sid);
 					ob.put("polarity", polarity);
@@ -237,6 +248,11 @@ public class DBManager {
 
 		return obj.toString();
 	}
+	
+	public String getJsonFromAttitude(String begin){
+		return getJsonFromAttitude(begin, null);
+	}
+	
 	/*
 	 * public static void main(String args[]) { DBManager ma = new DBManager();
 	 * ma.getDirver(); ma.connectAWS(); ma.queryNum(); ma.shutdown(); }

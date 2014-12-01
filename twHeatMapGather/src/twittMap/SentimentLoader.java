@@ -32,13 +32,12 @@ public class SentimentLoader extends HttpServlet {
 	}
 
 
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String time = request.getParameter("time");
-		String evaluation = db.getJsonFromAttitude();
+		String begin = request.getParameter("beginTime");
+		String evaluation = db.getJsonFromAttitude(begin);
 		response.setContentType("application/json");
 		response.getWriter().println(evaluation);
 	}
