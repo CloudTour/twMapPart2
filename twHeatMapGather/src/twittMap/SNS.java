@@ -17,7 +17,7 @@ public class SNS {
 	private static AWSCredentials credentials;
 	private static AmazonSNSClient snsClient;
 	private static String topicArn;
-	private static String endpoint;
+	private static String endpoint="http://snsservlet-env.elasticbeanstalk.com/";
 	
 	public static void init(){
 		try {
@@ -48,7 +48,7 @@ public class SNS {
 		
 		//subscribe to an SNS topic
 		//TODO: get the endpoint of this server.
-		//subscribe();
+		subscribe();
 	}
 
 	
@@ -72,5 +72,14 @@ public class SNS {
 		snsClient.deleteTopic(deleteTopicRequest);
 		//get request id for DeleteTopicRequest from SNS metadata
 		System.out.println("DeleteTopicRequest - " + snsClient.getCachedResponseMetadata(deleteTopicRequest));
+	}
+	
+	public static void main(String[] args){
+		System.out.println("init");
+		SNS.init();
+		System.out.println("publish message");
+		SNS.publishMsg("test message");
+		System.out.println("done");
+
 	}
 }

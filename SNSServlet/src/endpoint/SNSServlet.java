@@ -30,6 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SNSServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private	 DBManager db;
+	private String subscribeUrl;
+	 private String message;
+	private String debug;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -47,7 +50,9 @@ public class SNSServlet extends HttpServlet {
 		db.getDirver();
 		db.connectAWS();	
 		System.out.println("init done");
-
+		debug="{ \"Type\" : \"SubscriptionConfirmation\", \"MessageId\" : \"77c04f1f-5baa-4bde-8a90-8ebab2737ac2\", \"Token\" : \"2336412f37fb687f5d51e6e241d638b114f4eb043adc26e9705ea7763f57a803e2bc1e242595e709ddedb5aaa3d4697e566b93ff4fe58be44a89cd154af16338a8b5a824452fd37331689ea3ffc9d2b027e1fe3927a25d0e20554e749051da3dff7d19a665ee0b466df4e6e7f732c374\", \"TopicArn\" : \"arn:aws:sns:us-west-2:721409569289:test\", \"Message\" : \"You have chosen to subscribe to the topic arn:aws:sns:us-west-2:721409569289:test.\nTo confirm the subscription, visit the SubscribeURL included in this message.\", \"SubscribeURL\" : \"https://sns.us-west-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:us-west-2:721409569289:test&Token=2336412f37fb687f5d51e6e241d638b114f4eb043adc26e9705ea7763f57a803e2bc1e242595e709ddedb5aaa3d4697e566b93ff4fe58be44a89cd154af16338a8b5a824452fd37331689ea3ffc9d2b027e1fe3927a25d0e20554e749051da3dff7d19a665ee0b466df4e6e7f732c374\", \"Timestamp\" : \"2014-12-02T21:44:13.321Z\", \"SignatureVersion\" : \"1\", \"Signature\" : \"U8Xq7ur7sSAc0XQNlwO0vypdwdOaVioP7j2Xa2MJY/hsE3S/X34vPw1kqN2voWQ65KaLdD4qzzydfGwZmwxWkwtXKUVQGhYe/QB+nAXcGC57t7lsplvhn44G/A7+uufA9pngSIObRdvhv2Nh7cBRrLHsE1Gpkbd+QJCpJSYLb2CTmQZxxOAWhHi+Ldb62WA5twQZrmM/7JCp4zmnbu7wnTrUJX9+BObiAdTpOrre4FAaNYTKefoxjnCjkNYEYVx3gP45kel/Oseh5U+PMH8LKF5YGQ0WGElN7bcPK25rVdUuQb68H9Nn8l4O8kStmhAdnxEEdXiQiea7ss5QB8BglA==\", \"SigningCertURL\" : \"https://sns.us-west-2.amazonaws.com/SimpleNotificationService-d6d679a1d18e95c2f9ffcf11f4f9e198.pem\"}";
+		debug="{ \"Type\":\"hahaha\" , \"MessageId\" : \"77c04f1f-5baa-4bde-8a90-8ebab2737ac2\"}";
+		debug="";
 	}
 
 	/**
@@ -55,7 +60,13 @@ public class SNSServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-		response.getWriter().println("this servlet is working! Waiting for POST requests");
+		response.getWriter().println("</p>this servlet is working!</p>");
+		response.getWriter().println("</p>subscribeUrl: "+ subscribeUrl + "</p>");
+		response.getWriter().println("</p>message: "+ message + "</p>");
+		response.getWriter().println("</p>debug: "+ debug + "</p>");
+
+
+//		System.out.println(readMessageFromJson(debug));
 	}
 
 	/**
@@ -79,6 +90,7 @@ public class SNSServlet extends HttpServlet {
 			builder.append(scan.nextLine());
 		}
 		scan.close();
+		message = "<p>" + builder.toString() + "</p>";
 		SNSMessage msg = readMessageFromJson(builder.toString());
 
 		// The signature is based on SignatureVersion 1. 
@@ -124,6 +136,7 @@ public class SNSServlet extends HttpServlet {
 				sb.append(sc.nextLine());
 			}
 			sc.close();
+			subscribeUrl = msg.getSubscribeURL();
 			System.out.println(">>Subscription confirmation (" + msg.getSubscribeURL() +") Return value: " + sb.toString());
 			//TODO: Process the return value to ensure the endpoint is subscribed.
 			SNSHelper.INSTANCE.confirmTopicSubmission(msg);
