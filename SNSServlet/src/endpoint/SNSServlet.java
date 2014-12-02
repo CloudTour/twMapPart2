@@ -1,5 +1,4 @@
-package twittMap;
-
+package endpoint;
 
 
 import java.io.IOException;
@@ -10,16 +9,16 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Scanner;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,27 +26,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Servlet implementation class SNSServlet
  */
+@WebServlet("/")
 public class SNSServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private	 DBManager db;
-
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public SNSServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
 	/**
-	 * @see HttpServlet#HttpServlet()
+	 * @see Servlet#init(ServletConfig)
 	 */
-	public SNSServlet() {
-		super();
-		// TODO Auto-generated constructor stub
+	public void init(ServletConfig config) throws ServletException {
+		System.out.println("init DB connection");
 		db = new DBManager();
 		db.getDirver();
-		db.connectAWS();
+		db.connectAWS();	
+		System.out.println("init done");
+
 	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		response.setContentType("text/html");
+		response.getWriter().println("this servlet is working! Waiting for POST requests");
 	}
 
 	/**
