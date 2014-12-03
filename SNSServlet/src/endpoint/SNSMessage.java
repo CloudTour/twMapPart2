@@ -1,4 +1,5 @@
-package twittMap;
+package endpoint;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

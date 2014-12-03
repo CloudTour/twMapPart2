@@ -1,7 +1,16 @@
 twMapPart2
 ==========
+
+###About Code:
 **SNS.java**: provide static methods to use SNS.  
-**SNSServlet.java**:  Servlet for processing the post request from SNS which contains sentiment evaluation result.
+**SNSServlet.java**:  Servlet for processing the POST request from SNS which contains sentiment evaluation result.  
+**SentimentLoader.java**: Servlet. It returns sentiment data in JSON when getting GET requests.  
+
+###TODO:
+* Get the ip of the server and subscribe automatically  
+* ~~Filter the sentiment data when retrieving from db~~  
+* Better display sentiment data  
+
 
 Assignment Objectives:
 ●Use the Amazon SQS service to create a processing queue for the Tweets that are delivered by the Twitter Streaming API   
