@@ -35,7 +35,7 @@
 		<button onclick="submit()" style="width: 10%">submit</button>
 	</div>
 	<div id="Main" style="width: 100%; height: 100%">
-		<div id="map-canvas" style="width: 80%; float: left; height: 289px"></div>
+		<div id="map-canvas" style="width: 80%; float: left; height: 600px"></div>
 		<div style="width: 19%; height: 100%; float: left;">
 		<textarea id="status" readonly style="width: 838px; height: 303px"></textarea>
 		</div>

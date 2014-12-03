@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -38,10 +38,13 @@ public final class SimpleQueueService {
 	private static String myQueueUrl;
 	private static ThreadPoolExecutor threadPool;
 	private static int produceTaskMaxNumber = 10;
+
 	public static void IniateSimpleQueueService() {
 		try {
-			credentials = new ProfileCredentialsProvider("default")
-					.getCredentials();
+			// credentials = new ProfileCredentialsProvider("default")
+			// .getCredentials();
+			credentials = new BasicAWSCredentials("PUT YOUR KEYID HERE",
+					"PUT YOUR KEY HERE");
 		} catch (Exception e) {
 			throw new AmazonClientException(
 					"Cannot load the credentials from the credential profiles file. "
@@ -91,11 +94,13 @@ public final class SimpleQueueService {
 
 	}
 
-	public static void SendMsg(long Id,String msg) {
+	public static void SendMsg(long Id, String msg) {
 		// Send a message
-		System.out.println("Sending a message to MyQueue:"+String.format("%1$020d", Id)+msg);
+		System.out.println("Sending a message to MyQueue:"
+				+ String.format("%1$020d", Id) + msg);
 		try {
-			sqs.sendMessage(new SendMessageRequest(myQueueUrl, String.format("%1$020d", Id)+msg));
+			sqs.sendMessage(new SendMessageRequest(myQueueUrl, String.format(
+					"%1$020d", Id) + msg));
 		} catch (AmazonServiceException ase) {
 			System.out
 					.println("Caught an AmazonServiceException, which means your request made it "
@@ -123,30 +128,34 @@ public final class SimpleQueueService {
 					myQueueUrl).withMaxNumberOfMessages(1);
 			List<Message> messages = sqs.receiveMessage(receiveMessageRequest)
 					.getMessages();
-			for (Message message : messages) {
-				System.out.println("  Message");
-				System.out.println("    MessageId:     "
-						+ message.getMessageId());
-				System.out.println("    ReceiptHandle: "
-						+ message.getReceiptHandle());
-				System.out.println("    MD5OfBody:     "
-						+ message.getMD5OfBody());
-				System.out.println("    Body:          " + message.getBody());
-				for (Entry<String, String> entry : message.getAttributes()
-						.entrySet()) {
-					System.out.println("  Attribute");
-					System.out.println("    Name:  " + entry.getKey());
-					System.out.println("    Value: " + entry.getValue());
+			if (!messages.isEmpty()) {
+				for (Message message : messages) {
+					System.out.println("  Message");
+					System.out.println("    MessageId:     "
+							+ message.getMessageId());
+					System.out.println("    ReceiptHandle: "
+							+ message.getReceiptHandle());
+					System.out.println("    MD5OfBody:     "
+							+ message.getMD5OfBody());
+					System.out.println("    Body:          "
+							+ message.getBody());
+					for (Entry<String, String> entry : message.getAttributes()
+							.entrySet()) {
+						System.out.println("  Attribute");
+						System.out.println("    Name:  " + entry.getKey());
+						System.out.println("    Value: " + entry.getValue());
+					}
 				}
+				msg = messages.get(0).getBody().toString();
+				// Delete a message
+				System.out.println("Deleting a message.\n");
+				String messageRecieptHandle = messages.get(0)
+						.getReceiptHandle();
+				sqs.deleteMessage(new DeleteMessageRequest(myQueueUrl,
+						messageRecieptHandle));
+				System.out.println(msg);
 			}
-			msg = messages.get(0).getBody().toString();
-			// Delete a message
-			System.out.println("Deleting a message.\n");
-			String messageRecieptHandle = messages.get(0).getReceiptHandle();
-			sqs.deleteMessage(new DeleteMessageRequest(myQueueUrl,
-					messageRecieptHandle));
-			System.out.println(msg);
-			
+
 		} catch (AmazonServiceException ase) {
 			System.out
 					.println("Caught an AmazonServiceException, which means your request made it "
@@ -192,7 +201,7 @@ public final class SimpleQueueService {
 							+ "being able to access the network.");
 			System.out.println("Error Message: " + ace.getMessage());
 		}
-		//关闭线程池
+		// 关闭线程池
 		threadPool.shutdown();
 	}
 }
