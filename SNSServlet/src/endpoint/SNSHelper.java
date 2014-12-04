@@ -2,7 +2,6 @@ package endpoint;
 
 
 
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.sns.AmazonSNSClient;
@@ -12,11 +11,7 @@ import com.amazonaws.services.sns.model.ConfirmSubscriptionResult;
 public enum SNSHelper {
 	INSTANCE;
 	
-	
-	//Here I change the way to get credentials, which may be incorrect
-	private AWSCredentials credentials = new ProfileCredentialsProvider("default")
-	.getCredentials();
-		
+	private AWSCredentials credentials = new ProfileCredentialsProvider("default").getCredentials();
 	private AmazonSNSClient amazonSNSClient = new AmazonSNSClient(credentials);
 	
 	public void confirmTopicSubmission(SNSMessage message) {

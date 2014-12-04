@@ -1,5 +1,4 @@
-package endpoint;
-
+package edu.columbia.cc.elPonePelis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -30,11 +29,6 @@ public class SNSMessage {
     private String signingCertUrl = "";
     @JsonProperty("UnsubscribeURL")
     private String unsubscribeURL = "";
-    @JsonProperty("MessageAttributes")
-    private Object messageAttributes ;
-
-    
-
 
     public String getType() {
         return type;
