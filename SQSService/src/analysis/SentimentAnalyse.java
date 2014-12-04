@@ -20,6 +20,7 @@ import java.io.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -27,8 +28,8 @@ import javax.xml.xpath.XPathExpressionException;
 public class SentimentAnalyse{
 	private static final SentimentAnalyse sentimentAnalyse = new SentimentAnalyse();
 	AlchemyAPI alchemyObj = null;
-	ExecutorService service = Executors.newFixedThreadPool(5); // fix number
-	Boolean flag = true;
+	static Boolean flag = true;
+	ThreadPool threadPool = ThreadPool.getInstance();
 	
 	private SentimentAnalyse() {
 		//System.out.println("classLoader="+this.getClass().getClassLoader()); 
@@ -42,6 +43,7 @@ public class SentimentAnalyse{
 
 	public static SentimentAnalyse getInstance() {
 		System.out.println(sentimentAnalyse);
+		System.out.println("flag: " + flag);
 		return sentimentAnalyse;
 	}
     
@@ -50,28 +52,33 @@ public class SentimentAnalyse{
 		System.out.println(flag);
 	}
 	
-//	public void startThreadPool2() {
-//		while(flag) {
-//			Runnable run = new Runnable() {
-//				@Override
-//				public void run() {
-//					System.out.println("running");
-//				}
-//			};
-//			service.execute(run);
-//			//System.out.println(flag);
-//			try {
-//				Thread.sleep(3000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	public void startThreadPool2() {
+		ExecutorService pool = threadPool.startPool();
+		setFlag(true);
+		while(flag) {
+			Runnable run = new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("running");
+				}
+			};
+			pool.execute(run);
+			//System.out.println(flag);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public void startThreadPool() {
 		final SQSService sQSService = SQSService.getInstance();
 		final AmazonSNSClient snsClient = iniSNS();
 		final String topicArn = "";
+		ExecutorService pool = threadPool.startPool();
+		System.out.println("isShunt: " + pool.isShutdown());
+		setFlag(true);
 		while (flag) {
 			List<String> queues = sQSService.myListQueue();
 			//final SQSService tsQSService = sQSService;
@@ -112,7 +119,7 @@ public class SentimentAnalyse{
 						}
 					}
 				};
-				service.execute(run);
+				pool.execute(run);
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -143,12 +150,7 @@ public class SentimentAnalyse{
 	
 	public void closeThreadPool() {
 		setFlag(false);
-//		try {
-//			service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-		service.shutdown();
+		threadPool.shutPool();
 	}
 
 	public String[] analyse(String text) {
